@@ -1,0 +1,49 @@
+name: NewsQoder Daily
+
+on:
+  schedule:
+    - cron: '0 10 * * *'  # 每天 UTC 10:00 = 北京时间 18:00
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  collect-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        
+    - name: Run daily collection
+      env:
+        FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+        FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+        FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        FEISHU_BITABLE_TABLE_ID: ${{ secrets.FEISHU_BITABLE_TABLE_ID }}
+        FEISHU_WIKI_NODE_TOKEN: ${{ secrets.FEISHU_WIKI_NODE_TOKEN }}
+      run: |
+        python main.py
+        
+    - name: Generate web data
+      env:
+        FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+        FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        FEISHU_BITABLE_TABLE_ID: ${{ secrets.FEISHU_BITABLE_TABLE_ID }}
+        FEISHU_WIKI_NODE_TOKEN: ${{ secrets.FEISHU_WIKI_NODE_TOKEN }}
+      run: |
+        python scripts/generate_web_data.py
+        
+    - name: Commit and push
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data.json
+        git diff --staged --quiet || (git commit -m "Update daily data" && git push)

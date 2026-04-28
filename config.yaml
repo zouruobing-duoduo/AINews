@@ -1,0 +1,130 @@
+# 智驾AI日报 配置文件
+
+# 飞书机器人 Webhook 地址（从环境变量 FEISHU_WEBHOOK 读取）
+feishu:
+  webhook_url: ""
+
+# 推送时间（仅供参考，实际由 Windows 任务计划程序控制）
+schedule:
+  time: "18:00"
+
+# RSS 新闻源
+rss_sources:
+  # === 综合科技（中文） ===
+  - name: "36氪"
+    url: "https://36kr.com/feed"
+    category: "general"
+    min_relevance: 1
+    keywords: ["AI", "智驾", "自动驾驶", "智能驾驶", "无人驾驶", "NOA", "Robotaxi", "L3", "L4",
+      "激光雷达", "城市领航", "辅助驾驶",
+      "人工智能", "大模型", "多模态", "智能体", "Agent", "端到端", "VLA", "世界模型",
+      "GPT", "LLM", "开源模型", "Transformer", "AIGC", "生成式AI",
+      "车联网", "V2X", "机器人", "具身智能",
+      "小鹏", "理想汽车", "零跑汽车", "华为", "小米汽车", "蔚来",
+      "百度", "小马智行", "文远知行", "地平线", "Waymo",
+      "算力", "GPU", "NPU", "AI芯片", "芯片",
+      "OpenAI", "DeepSeek", "Anthropic", "Claude", "token",
+      "阿维塔", "问界", "智界", "鸿蒙智行"]
+
+  - name: "钛媒体"
+    url: "https://www.tmtpost.com/feed"
+    category: "general"
+    min_relevance: 1
+    keywords: ["AI", "智驾", "自动驾驶", "智能驾驶", "大模型", "多模态", "智能体", "Agent",
+      "机器人", "具身智能", "端到端", "LLM", "GPT",
+      "人工智能", "Robotaxi", "NOA",
+      "小鹏", "理想汽车", "华为", "蔚来", "小米汽车",
+      "OpenAI", "DeepSeek", "Anthropic", "Claude",
+      "算力", "GPU", "芯片"]
+
+  - name: "爱范儿"
+    url: "https://www.ifanr.com/feed"
+    category: "general"
+    min_relevance: 1
+    keywords: ["AI", "智驾", "自动驾驶", "智能驾驶", "大模型", "多模态", "智能体", "Agent",
+      "机器人", "具身智能", "端到端", "LLM", "GPT",
+      "人工智能", "Robotaxi", "NOA",
+      "小鹏", "理想汽车", "华为", "蔚来", "小米汽车", "阿维塔",
+      "OpenAI", "DeepSeek", "Claude",
+      "算力", "GPU", "芯片"]
+
+  # === AI 专业源（中文） ===
+  - name: "量子位"
+    url: "https://www.qbitai.com/feed"
+    category: "ai"
+    min_relevance: 1
+    keywords: ["AI", "大模型", "自动驾驶", "GPT", "多模态", "智能体", "Agent", "LLM",
+      "人工智能", "开源", "机器人", "token", "Claude", "OpenAI", "DeepSeek",
+      "Transformer", "算力", "GPU", "芯片", "训练", "推理", "具身智能"]
+
+  - name: "InfoQ"
+    url: "https://www.infoq.cn/feed"
+    category: "ai"
+    min_relevance: 1
+    keywords: ["AI", "大模型", "LLM", "GPT", "智能体", "Agent",
+      "自动驾驶", "智能驾驶", "多模态", "Transformer",
+      "OpenAI", "DeepSeek", "Claude", "机器人", "具身智能"]
+
+  - name: "Solidot"
+    url: "https://www.solidot.org/index.rss"
+    category: "technology"
+    min_relevance: 1
+    keywords: ["AI", "人工智能", "大模型", "LLM", "GPT", "自动驾驶", "智能驾驶",
+      "机器人", "机器学习", "深度学习", "神经网络", "OpenAI", "DeepSeek",
+      "芯片", "GPU", "开源", "Linux", "Python"]
+
+# 网页抓取源（无 RSS）- 当前无可用源
+web_sources: []
+
+# 内容筛选关键词（按优先级排序）
+filter_keywords:
+  high_priority:
+    - "L3"
+    - "L4"
+    - "城市NOA"
+    - "NOA"
+    - "Robotaxi"
+    - "AI"
+    - "大模型"
+    - "多模态"
+    - "智能体"
+    - "Agent"
+    - "VLA"
+    - "世界模型"
+    - "端到端"
+    - "渗透率"
+    - "自动驾驶"
+    - "智能驾驶"
+    - "智驾"
+    - "人工智能"
+    - "LLM"
+    - "GPT"
+    - "OpenAI"
+    - "DeepSeek"
+    - "Claude"
+  medium_priority:
+    - "融资"
+    - "合作"
+    - "出海"
+    - "论文"
+    - "开源"
+    - "AI芯片"
+    - "算力"
+    - "数据闭环"
+    - "仿真"
+    - "机器人"
+    - "具身智能"
+    - "无人驾驶"
+    - "激光雷达"
+    - "政策"
+    - "法规"
+
+# 每个分类保留的最大条数
+max_items_per_category: 8
+
+# 请求配置
+request:
+  timeout: 15
+  retry: 3
+  delay: 2  # 请求间隔（秒）
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
