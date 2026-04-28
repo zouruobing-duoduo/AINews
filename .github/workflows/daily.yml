@@ -44,8 +44,9 @@ jobs:
         python scripts/generate_web_data.py
         
     - name: Commit and push
+      if: always()
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add data.json
+        git add data.json error.log 2>nul || true
         git diff --staged --quiet || (git commit -m "Update daily data" && git push)

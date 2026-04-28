@@ -104,4 +104,13 @@ def generate_web_data():
 
 
 if __name__ == "__main__":
-    generate_web_data()
+    try:
+        generate_web_data()
+    except Exception:
+        import traceback
+        error_msg = traceback.format_exc()
+        print(error_msg, flush=True)
+        error_path = PROJECT_ROOT / "error.log"
+        with open(error_path, "w", encoding="utf-8") as f:
+            f.write(error_msg)
+        raise
