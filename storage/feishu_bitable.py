@@ -90,7 +90,8 @@ class FeishuBitableStore:
 
         self._tenant_access_token = data["tenant_access_token"]
         # token 有效期 2 小时，提前 10 分钟过期
-        self._token_expires = datetime.now().timestamp() + data["expire"] - 600
+        from datetime import timedelta
+        self._token_expires = datetime.now() + timedelta(seconds=data["expire"] - 600)
         
         return self._tenant_access_token
 
