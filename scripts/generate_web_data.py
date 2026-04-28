@@ -73,14 +73,20 @@ def generate_web_data():
         cat = article["category"]
         categories[cat] = categories.get(cat, 0) + 1
     
-    # 按日期倒序排序
-    articles.sort(key=lambda x: x.get("push_date", ""), reverse=True)
+    # 按日期倒序排序（统一转为字符串比较）
+    def _date_key(article):
+        d = article.get("push_date", "")
+        if d is None:
+            return ""
+        return str(d)
+    
+    articles.sort(key=_date_key, reverse=True)
     
     # 构建 data.json
     data = {
         "meta": {
             "total": len(articles),
-            "dates": sorted(list(dates), reverse=True),
+            "dates": sorted([str(d) for d in dates if d], reverse=True),
             "categories": categories,
             "generated_at": __import__('datetime').datetime.now().isoformat(),
         },
