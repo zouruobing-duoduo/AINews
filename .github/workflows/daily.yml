@@ -41,12 +41,13 @@ jobs:
         FEISHU_BITABLE_TABLE_ID: ${{ secrets.FEISHU_BITABLE_TABLE_ID }}
         FEISHU_WIKI_NODE_TOKEN: ${{ secrets.FEISHU_WIKI_NODE_TOKEN }}
       run: |
-        python scripts/generate_web_data.py
+        python scripts/generate_web_data.py > generate.log 2>&1 || true
+        cat generate.log
         
     - name: Commit and push
       if: always()
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add data.json error.log 2>nul || true
+        git add data.json generate.log 2>/dev/null || true
         git diff --staged --quiet || (git commit -m "Update daily data" && git push)
