@@ -41,8 +41,7 @@ jobs:
         FEISHU_BITABLE_TABLE_ID: ${{ secrets.FEISHU_BITABLE_TABLE_ID }}
         FEISHU_WIKI_NODE_TOKEN: ${{ secrets.FEISHU_WIKI_NODE_TOKEN }}
       run: |
-        python scripts/generate_web_data.py > generate.log 2>&1 || true
-        cat generate.log
+        python scripts/generate_web_data.py
         
     - name: Commit and push
       if: always()
