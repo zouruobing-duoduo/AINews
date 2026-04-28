@@ -21,12 +21,25 @@ logger = logging.getLogger(__name__)
 
 def generate_web_data():
     """生成 data.json"""
-    store = FeishuBitableStore()
+    logger.info("初始化 FeishuBitableStore...")
+    logger.info(f"APP_ID: {os.getenv('FEISHU_APP_ID', '未设置')[:10]}...")
+    logger.info(f"TABLE_ID: {os.getenv('FEISHU_BITABLE_TABLE_ID', '未设置')}")
+    logger.info(f"WIKI_NODE: {os.getenv('FEISHU_WIKI_NODE_TOKEN', '未设置')[:10]}...")
+    
+    try:
+        store = FeishuBitableStore()
+    except Exception as e:
+        logger.error(f"初始化 BitableStore 失败: {e}")
+        raise
     
     logger.info("正在从 Bitable 读取数据...")
     
     # 获取所有文章（限制最近 30 天）
-    records = store.list_records(page_size=500)
+    try:
+        records = store.list_records(page_size=500)
+    except Exception as e:
+        logger.error(f"读取 Bitable 记录失败: {e}")
+        raise
     
     articles = []
     featured = []
