@@ -34,6 +34,13 @@ jobs:
       run: |
         python main.py
         
+    - name: Debug Python env
+      run: |
+        python --version
+        python -c "import sys; print(sys.executable); print(sys.path)"
+        ls -la scripts/
+        head -5 scripts/generate_web_data.py
+        
     - name: Generate web data
       env:
         FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
