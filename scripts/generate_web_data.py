@@ -92,6 +92,7 @@ try:
 
 except Exception:
     error_msg = traceback.format_exc()
+    print(error_msg, file=sys.stderr)
     with open("error.log", "w", encoding="utf-8") as f:
         f.write(error_msg)
     raise
