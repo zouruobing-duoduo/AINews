@@ -66,6 +66,18 @@ class SQLiteStore:
                 )
             """)
             
+            # 每日洞察表
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS daily_insights (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    date TEXT NOT NULL,
+                    insight TEXT NOT NULL,
+                    keywords TEXT,
+                    category_stats TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            
             conn.commit()
 
     # ==================== 文章操作 ====================
@@ -210,4 +222,76 @@ class SQLiteStore:
                 return True
         except Exception as e:
             logger.error(f"[SQLiteStore] 清空重点推荐失败: {e}")
+            return False
+
+    # ==================== 每日洞察操作 ====================
+    
+    def add_insight(self, date: str, insight: str, keywords: Optional[str] = None, category_stats: Optional[str] = None) -> bool:
+        """添加每日洞察"""
+        try:
+            with self._get_conn() as conn:
+                conn.execute("""
+                    INSERT INTO daily_insights (date, insight, keywords, category_stats)
+                    VALUES (?, ?, ?, ?)
+                """, (date, insight, keywords, category_stats))
+                conn.commit()
+                return True
+        except Exception as e:
+            logger.error(f"[SQLiteStore] 添加洞察失败: {e}")
+            return False
+    
+    def get_insights_by_date(self, date: str) -> List[Dict[str, Any]]:
+        """获取指定日期的洞察"""
+        with self._get_conn() as conn:
+            rows = conn.execute(
+                "SELECT * FROM daily_insights WHERE date = ? ORDER BY id",
+                (date,)
+            ).fetchall()
+            return [dict(row) for row in rows]
+    
+    def clear_insights_by_date(self, date: str) -> bool:
+        """清空指定日期的洞察"""
+        try:
+            with self._get_conn() as conn:
+                conn.execute("DELETE FROM daily_insights WHERE date = ?", (date,))
+                conn.commit()
+                return True
+        except Exception as e:
+            logger.error(f"[SQLiteStore] 清空洞察失败: {e}")
+            return False
+
+    # ==================== 每日洞察操作 ====================
+    
+    def add_insight(self, date: str, insight: str, keywords: Optional[str] = None, category_stats: Optional[str] = None) -> bool:
+        """添加每日洞察"""
+        try:
+            with self._get_conn() as conn:
+                conn.execute("""
+                    INSERT INTO daily_insights (date, insight, keywords, category_stats)
+                    VALUES (?, ?, ?, ?)
+                """, (date, insight, keywords, category_stats))
+                conn.commit()
+                return True
+        except Exception as e:
+            logger.error(f"[SQLiteStore] 添加洞察失败: {e}")
+            return False
+    
+    def get_insights_by_date(self, date: str) -> List[Dict[str, Any]]:
+        """获取指定日期的洞察"""
+        with self._get_conn() as conn:
+            rows = conn.execute(
+                "SELECT * FROM daily_insights WHERE date = ? ORDER BY id",
+                (date,)
+            ).fetchall()
+            return [dict(row) for row in rows]
+    
+    def clear_insights_by_date(self, date: str) -> bool:
+        """清空指定日期的洞察"""
+        try:
+            with self._get_conn() as conn:
+                conn.execute("DELETE FROM daily_insights WHERE date = ?", (date,))
+                conn.commit()
+                return True
+        except Exception as e:
+            logger.error(f"[SQLiteStore] 清空洞察失败: {e}")
             return False

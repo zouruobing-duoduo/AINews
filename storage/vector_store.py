@@ -141,6 +141,23 @@ class VectorStore:
         """清空重点推荐"""
         return self.store.clear_featured(category_tag)
 
+    def store_insights(self, date: str, insights: List[str], keywords: Optional[Dict[str, Any]] = None, category_stats: Optional[Dict[str, Any]] = None) -> int:
+        """保存每日洞察"""
+        import json
+        self.store.clear_insights_by_date(date)
+        count = 0
+        keywords_json = json.dumps(keywords, ensure_ascii=False) if keywords else None
+        stats_json = json.dumps(category_stats, ensure_ascii=False) if category_stats else None
+        for insight in insights:
+            if self.store.add_insight(date, insight, keywords_json, stats_json):
+                count += 1
+        logger.info(f"[向量库] 保存 {count} 条洞察")
+        return count
+
+    def get_insights_by_date(self, date: str) -> List[Dict[str, Any]]:
+        """获取指定日期的洞察"""
+        return self.store.get_insights_by_date(date)
+
     @staticmethod
     def _make_id(title: str, date: str) -> str:
         """根据标题和日期生成唯一 ID"""

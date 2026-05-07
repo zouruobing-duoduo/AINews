@@ -213,3 +213,41 @@ class Classifier:
             insights.append("今日资讯分布均匀，未发现集中爆发的趋势信号。")
 
         return insights[:3]
+
+    def select_featured(
+        self,
+        classified: Dict[str, List[Dict[str, Any]]],
+        max_total: int = 4,
+    ) -> List[Dict[str, Any]]:
+        """
+        从各分类中选取得分最高的文章作为重点推荐。
+        每个分类最多选 1 篇，总共不超过 max_total 篇。
+        """
+        featured = []
+        for cat_key, articles in classified.items():
+            if not articles:
+                continue
+            # 按综合优先级得分排序
+            sorted_articles = sorted(
+                articles,
+                key=lambda x: (
+                    self._priority_score(x),
+                    x.get("category_score", 0),
+                ),
+                reverse=True,
+            )
+            # 取该分类得分最高的一篇
+            best = sorted_articles[0]
+            featured.append({
+                "title": best.get("title", ""),
+                "summary": best.get("summary", "")[:300],
+                "link": best.get("link", ""),
+                "source": best.get("source", ""),
+                "category": best.get("display_category", CATEGORY_KEYWORDS.get(cat_key, {}).get("name", cat_key)),
+                "category_tag": "大模型优化方向",
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "sort_order": len(featured),
+            })
+        # 按排序截取
+        featured.sort(key=lambda x: x["sort_order"])
+        return featured[:max_total]

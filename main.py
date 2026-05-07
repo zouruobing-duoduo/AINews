@@ -4,6 +4,7 @@
 """
 
 import io
+import json
 import logging
 import os
 import sys
@@ -141,6 +142,15 @@ def main():
             # 6. 生成机会洞察
             insights = classifier.generate_insights(classified)
 
+            # 6.5 自动标记重点推荐
+            featured_articles = classifier.select_featured(classified)
+            featured_links = {a["link"] for a in featured_articles}
+            for articles in classified.values():
+                for article in articles:
+                    if article.get("link") in featured_links:
+                        article["featured_tag"] = "大模型优化方向"
+            logger.info(f"[重点推荐] 自动标记 {len(featured_articles)} 篇文章")
+
             # 7. 生成日报
             logger.info("[生成] 开始生成日报...")
 
@@ -168,6 +178,20 @@ def main():
                         f"[向量库] 历史累计 {stats['total']} 条记录，"
                         f"覆盖 {len(stats['dates'])} 天"
                     )
+
+                    # 9.1 保存重点推荐
+                    vector_store.clear_featured()
+                    for article in featured_articles:
+                        vector_store.add_featured(article)
+                    logger.info(f"[重点推荐] 保存 {len(featured_articles)} 条到本地库")
+
+                    # 9.2 保存每日洞察
+                    category_stats = {
+                        cat: len(articles)
+                        for cat, articles in classified.items()
+                    }
+                    vector_store.store_insights(push_date, insights, category_stats=category_stats)
+                    logger.info(f"[洞察] 保存 {len(insights)} 条到本地库")
                 except Exception as e:
                     logger.warning(f"[向量库] 存储失败（不影响推送）: {e}")
 
@@ -199,3 +223,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
