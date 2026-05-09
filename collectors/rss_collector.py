@@ -23,7 +23,13 @@ CORE_DOMAIN_KEYWORDS = [
     "NOA", "Robotaxi", "L3", "L4", "城市领航",
     # AI 核心
     "AI", "人工智能", "大模型", "LLM", "GPT", "多模态", "智能体", "Agent",
-    "端到端", "VLA", "世界模型", "Transformer", "深度学习", "机器学习",
+    "端到端", "VLA", "世界模型", "World Model", "World Models",
+    "视频世界模型", "自动驾驶世界模型", "生成式世界模型", "交互式世界模型",
+    "Sora", "视频生成", "物理仿真", "物理引擎", "3D场景理解", "环境建模",
+    "动态预测", "因果推理", "状态预测",
+    "Cosmos", "NVIDIA Cosmos", "英伟达Cosmos", "Wayve 世界模型",
+    "特斯拉世界模型", "Google DeepMind 世界模型",
+    "Transformer", "深度学习", "机器学习",
     "AIGC", "生成式AI", "GenAI",
     # 硬件/算力
     "激光雷达", "感知算法", "BEV", "4D雷达",
