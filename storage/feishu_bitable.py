@@ -114,6 +114,36 @@ class FeishuBitableStore:
         
         return data.get("data", {})
 
+    def ensure_table_fields(self):
+        """确保表格有所需字段，缺失则自动创建"""
+        required_fields = {
+            "标题": {"type": 1, "property": {}},
+            "摘要": {"type": 1, "property": {}},
+            "链接": {"type": 15, "property": {}},
+            "分类": {"type": 1, "property": {}},
+            "日期": {"type": 1, "property": {}},
+            "来源": {"type": 1, "property": {}},
+            "重点推荐-大模型优化方向": {"type": 1, "property": {}},
+        }
+
+        try:
+            # 获取现有字段
+            data = self._request("GET", "/fields")
+            existing = {f["field_name"] for f in data.get("items", [])}
+            
+            # 创建缺失字段
+            for name, field_def in required_fields.items():
+                if name not in existing:
+                    self._request("POST", "/fields", json={
+                        "field_name": name,
+                        "type": field_def["type"],
+                    })
+                    logger.info(f"[Bitable] 创建字段: {name}")
+            
+            logger.info("[Bitable] 字段检查完成")
+        except Exception as e:
+            logger.warning(f"[Bitable] 字段初始化失败: {e}")
+
     def add_record(self, fields: Dict[str, Any]) -> bool:
         """添加记录"""
         try:

@@ -199,6 +199,7 @@ def main():
             if total_items > 0:
                 try:
                     bitable = FeishuBitableStore()
+                    bitable.ensure_table_fields()
                     stored_count = 0
                     for category, articles in classified.items():
                         for article in articles:
