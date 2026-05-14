@@ -118,7 +118,6 @@ class FeishuBitableStore:
         """确保表格有所需字段，缺失则自动创建"""
         required_fields = {
             "标题": {"type": 1, "property": {}},
-            "摘要": {"type": 1, "property": {}},
             "链接": {"type": 15, "property": {}},
             "分类": {"type": 1, "property": {}},
             "日期": {"type": 1, "property": {}},
@@ -199,7 +198,6 @@ class FeishuBitableStore:
         """存储单篇文章"""
         fields = {
             "标题": article.get("title", ""),
-            "摘要": article.get("summary", "")[:500],
             "链接": {"link": article.get("link", ""), "text": "阅读原文"},
             "分类": article.get("category", ""),
             "日期": article.get("push_date", ""),
