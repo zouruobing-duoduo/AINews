@@ -175,6 +175,26 @@ class FeishuBitableStore:
 
         return records
 
+    def get_existing_links(self) -> set:
+        """获取 Bitable 中已存储的所有文章链接（用于去重）"""
+        try:
+            records = self.list_records()
+            links = set()
+            for record in records:
+                fields = record.get("fields", {})
+                link_field = fields.get("链接", {})
+                if isinstance(link_field, dict):
+                    link = link_field.get("link", "")
+                else:
+                    link = str(link_field) if link_field else ""
+                if link:
+                    links.add(link)
+            logger.info(f"[Bitable] 已有 {len(links)} 条记录")
+            return links
+        except Exception as e:
+            logger.warning(f"[Bitable] 获取已有链接失败: {e}")
+            return set()
+
     def store_article(self, article: Dict[str, Any]) -> bool:
         """存储单篇文章"""
         fields = {
@@ -187,6 +207,24 @@ class FeishuBitableStore:
             "重点推荐-大模型优化方向": article.get("featured_tag", ""),
         }
         return self.add_record(fields)
+
+    def store_articles_dedup(self, articles: List[Dict[str, Any]]) -> int:
+        """去重存储多篇文章，返回实际新增数量"""
+        existing_links = self.get_existing_links()
+        stored = 0
+        skipped = 0
+        for article in articles:
+            link = article.get("link", "")
+            if link and link in existing_links:
+                skipped += 1
+                continue
+            if self.store_article(article):
+                stored += 1
+                if link:
+                    existing_links.add(link)
+        if skipped > 0:
+            logger.info(f"[Bitable] 跳过 {skipped} 篇重复文章")
+        return stored
 
     def get_articles_by_date(self, date: str) -> List[Dict[str, Any]]:
         """按日期获取文章"""

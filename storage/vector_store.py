@@ -123,6 +123,10 @@ class VectorStore:
         """获取指定日期的所有推送记录"""
         return self.store.get_articles(date_from=date, date_to=date)
 
+    def get_all_articles(self, limit: int = 5000) -> List[Dict[str, Any]]:
+        """获取所有文章（用于同步到云端）"""
+        return self.store.get_articles(limit=limit)
+
     def get_stats(self) -> Dict[str, Any]:
         """获取存储统计信息"""
         return self.store.get_stats()

@@ -195,19 +195,30 @@ def main():
                 except Exception as e:
                     logger.warning(f"[向量库] 存储失败（不影响推送）: {e}")
 
-            # 10. 存入飞书 Bitable（云端数据库）
+            # 10. 存入飞书 Bitable（云端数据库，去重写入）
             if total_items > 0:
                 try:
                     bitable = FeishuBitableStore()
                     bitable.ensure_table_fields()
-                    stored_count = 0
+
+                    # 10.1 存储今日新采集的文章（去重）
+                    today_articles = []
                     for category, articles in classified.items():
                         for article in articles:
                             article["push_date"] = push_date
                             article["category"] = article.get("display_category", category)
-                            if bitable.store_article(article):
-                                stored_count += 1
-                    logger.info(f"[Bitable] 成功存储 {stored_count} 篇文章到飞书")
+                            today_articles.append(article)
+                    stored_count = bitable.store_articles_dedup(today_articles)
+                    logger.info(f"[Bitable] 今日新增 {stored_count} 篇（共 {len(today_articles)} 篇，去重后）")
+
+                    # 10.2 同步本地 SQLite 历史数据到 Bitable
+                    try:
+                        local_articles = vector_store.get_all_articles()
+                        if local_articles:
+                            sync_count = bitable.store_articles_dedup(local_articles)
+                            logger.info(f"[Bitable] 同步本地历史: 新增 {sync_count} 篇（本地共 {len(local_articles)} 篇）")
+                    except Exception as e:
+                        logger.warning(f"[Bitable] 同步本地历史失败: {e}")
                 except Exception as e:
                     logger.warning(f"[Bitable] 存储失败（不影响推送）: {e}")
         else:
