@@ -222,7 +222,8 @@ def main():
                 except Exception as e:
                     logger.warning(f"[Bitable] 存储失败（不影响推送）: {e}")
         else:
-            logger.warning("[完成] 日报推送失败，请检查 Webhook 配置")
+            logger.error("[完成] 日报推送失败，请检查 Webhook 配置")
+            sys.exit(1)
 
     except Exception as e:
         logger.error(f"[错误] 执行异常: {e}", exc_info=True)
